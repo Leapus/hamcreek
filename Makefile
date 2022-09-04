@@ -86,7 +86,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = chirp2djmd5$(EXEEXT)
+bin_PROGRAMS = hamcreek$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -101,12 +101,12 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_chirp2djmd5_OBJECTS = main.$(OBJEXT) channel.$(OBJEXT) \
+am_hamcreek_OBJECTS = main.$(OBJEXT) channel.$(OBJEXT) \
 	chirp_channel_file.$(OBJEXT) csv_exception.$(OBJEXT) \
 	csv.$(OBJEXT) exception.$(OBJEXT) string.$(OBJEXT) \
 	field.$(OBJEXT) config.$(OBJEXT) djmd5_file.$(OBJEXT)
-chirp2djmd5_OBJECTS = $(am_chirp2djmd5_OBJECTS)
-chirp2djmd5_LDADD = $(LDADD)
+hamcreek_OBJECTS = $(am_hamcreek_OBJECTS)
+hamcreek_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -141,8 +141,8 @@ AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(chirp2djmd5_SOURCES)
-DIST_SOURCES = $(chirp2djmd5_SOURCES)
+SOURCES = $(hamcreek_SOURCES)
+DIST_SOURCES = $(hamcreek_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -204,7 +204,7 @@ CPP = gcc -E
 CPPFLAGS = -I./include
 CXX = g++
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O0
+CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DPACKAGE_NAME=\"chirp2djmd5\" -DPACKAGE_TARNAME=\"chirp2djmd5\" -DPACKAGE_VERSION=\"0.1\" -DPACKAGE_STRING=\"chirp2djmd5\ 0.1\" -DPACKAGE_BUGREPORT=\"ultrapod333@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"chirp2djmd5\" -DVERSION=\"0.1\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_CSV_H=1
 DEPDIR = .deps
@@ -219,7 +219,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = -g
+LDFLAGS = 
 LIBOBJS = 
 LIBS =  -lcsv
 LTLIBOBJS = 
@@ -283,7 +283,7 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = .
 AM_CXXFLAGS = -std=c++17
-chirp2djmd5_SOURCES = main.cpp channel.cpp chirp_channel_file.cpp csv_exception.cpp \
+hamcreek_SOURCES = main.cpp channel.cpp chirp_channel_file.cpp csv_exception.cpp \
     csv.cpp exception.cpp string.cpp field.cpp config.cpp djmd5_file.cpp 
 
 all: all-am
@@ -366,9 +366,9 @@ uninstall-binPROGRAMS:
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
-chirp2djmd5$(EXEEXT): $(chirp2djmd5_OBJECTS) $(chirp2djmd5_DEPENDENCIES) $(EXTRA_chirp2djmd5_DEPENDENCIES) 
-	@rm -f chirp2djmd5$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(chirp2djmd5_OBJECTS) $(chirp2djmd5_LDADD) $(LIBS)
+hamcreek$(EXEEXT): $(hamcreek_OBJECTS) $(hamcreek_DEPENDENCIES) $(EXTRA_hamcreek_DEPENDENCIES) 
+	@rm -f hamcreek$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(hamcreek_OBJECTS) $(hamcreek_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
