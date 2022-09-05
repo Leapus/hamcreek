@@ -1,4 +1,18 @@
 You will neeed to have libcsv installed on your system:
 https://github.com/rgamble/libcsv/blob/master/csv.pdf
 
+On Debian-like systems, that is: 
+> apt-get install libcsv-dev
+
+The steps to build are:
+
+(should be optional)
+> autoreconf
+
+And then...
+
+> ./configure
+> make -j `nproc`
+
+That's all.
 
