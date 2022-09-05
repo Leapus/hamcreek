@@ -47,8 +47,10 @@ void cci::name(const std::string &v){
    tempchan.name = v;
 }
 
+//Channel frequencies have 5 decimal places, accurate to 10Hz
 void cci::frequency(const std::string &v){
-   tempchan.rx_freq = std::stod(v) * 1000000;
+   tempchan.rx_freq = fixed_point(v, 5);
+   //tempchan.rx_freq = std::stod(v) * 1000000;
 }
 
 //Print a warning for a specific record
@@ -97,7 +99,9 @@ void cci::offset(const std::string &v){
       return;
    }
    
-   freq_t offs = std::stol(v);
+   //auto offs = std::stod(v) * 1000000;
+   //Have not seen offsets with more precision than 100kHz, but 5 decimal places is for consistency
+   auto offs = fixed_point( v, 5);
 
    //Absolute tx freq given
    if(m_duplex == Split){
@@ -106,7 +110,6 @@ void cci::offset(const std::string &v){
    }
 
    //Relative offset in MHz
-   offs *= 1000000;
    if(m_duplex == Positive){
       tempchan.tx_freq = tempchan.rx_freq + offs;
    }
@@ -162,11 +165,11 @@ std::string cci::make_tone_string( const std::string &v ) const{
 */
 
 void cci::rx_tone(const std::string &v){
-   tempchan.ctcss_rx_code = stringtohztenths(v);
+   tempchan.ctcss_rx_code = fixed_point(v, 5);
 }
 
 void cci::tx_tone(const std::string &v){
-   tempchan.ctcss_tx_code = stringtohztenths(v);
+   tempchan.ctcss_tx_code = fixed_point(v,5);
 }
 
 void cci::dtcs_code(const std::string &v){

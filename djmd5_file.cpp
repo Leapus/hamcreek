@@ -48,7 +48,7 @@ void djmd5_channel_exporter::write( leapus::hamconf::channel_map_type &channels)
     }
 }
 
-std::string mk_tone_string(const freq_field &ctcsstenths, const freq_field &dcstone, tone_code_types type, bool pol){
+std::string mk_tone_string(const freq_field &ctcss, const freq_field &dcstone, tone_code_types type, bool pol){
 
     std::stringstream ss;
     std::string tmp;
@@ -57,8 +57,9 @@ std::string mk_tone_string(const freq_field &ctcsstenths, const freq_field &dcst
             return "Off";
             break;
 
+        //These usually have a precision of 100kHz
         case CTCSS:
-            return ctcsstenths.to_string(1);
+            return fixed_to_string(ctcss.value(),5);
             break;
 
         case DCS:
@@ -91,8 +92,8 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     m_csv.write_field( c.name );
     //m_csv.write_field( c.rx_freq.to_string(6) );
     //m_csv.write_field( c.tx_freq.to_string(6) );
-    m_csv.write_field( std::to_string(((double)c.rx_freq.value()) / 1000000) );
-    m_csv.write_field( std::to_string(((double)c.tx_freq.value()) / 1000000) );
+    m_csv.write_field( fixed_to_string(c.rx_freq.value(),5) );
+    m_csv.write_field( fixed_to_string(c.tx_freq.value(),5) );
 
     switch(c.type){
         case analog:
@@ -170,11 +171,16 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
 
 
     auto tmplock = c.busy_lock;
+    //This looked like it was going to be necessary, but it seems that the squelch level
+    //is configurable, so it should be possible to keep it from sticking open and endlessly
+    //locking transmit. Would be extra nice if you could set per-channel squelch level.
+    /*
     if(c.squelch_mode == squelch_modes::Carrier){
         //Carrier squelch mode can be really spurious, where it holds the squelch open indefinitely,
         //so if you lock for Carrier, you will never be able to transmit. So, prohibit this condition.
         tmplock = busy_lock_values::Off;
     }
+    */
 
     //busy lock
     switch(tmplock){
@@ -195,8 +201,18 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
             break;
     }
 
+    /*
     //TODO: Currently going to assume carrier, and that's probably the most failsafe method anyway
     m_csv.write_field("Carrier");   //Squelch mode
+    */
+
+   //If we are configured for an RX code, then rely on that code for squelch.
+   //Seems like carrier-detect can be sketchy and lacking in selectivity.
+   //It seems closer to an amplitude-detect, and can be tripped by noise.
+    if(c.rx_code_type != tone_code_types::ToneNone)
+        m_csv.write_field("CTCSS/DCS");
+    else
+        m_csv.write_field("Carrier");
 
     m_csv.write_field("Off");   //Optional signal
     m_csv.write_field( std::to_string( c.dtmf_id));
@@ -229,17 +245,11 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     m_csv.write_field( c.talk_around.to_string() );
     m_csv.write_field( c.work_alone.to_string() );
 
-
-    //Looks like this is a custom tone so that you can specify non-standard tone frequencies.
-    //However, if you set it to something the radio doesn't like, it will get stuck in TX mode
-    //when you push the PTT, and that's not good. So, when this is logically zero or undefined,
-    //we will default it to the lowest standard CTCSS value to keep the firmware from freezing up.
-    //TODO: I haven't figured out what string to write into the tone fields so that this field will
-    //even be observed, so it doesn't do anything currently.
-    if(c.custom_ctss.value() == 0)
+    //This doesn't do anything right now. We default it to an arbitrary standard value.
+    //if(c.custom_ctss.value() == 0)
         m_csv.write_field( "67.0" );
-    else
-        m_csv.write_field( c.custom_ctss.to_string(1) );
+    //else
+    //    m_csv.write_field( c.custom_ctss.to_string(1) );
 
     m_csv.write_field( std::to_string(c.twotone_decode) );
     m_csv.write_field( c.ranging.to_string() );
@@ -251,7 +261,7 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     //TODO. APRS report type. Assume off for now.
     m_csv.write_field( "Off" );
     m_csv.write_field( std::to_string(c.digital_aprs_report_channel) );
-    m_csv.write_field( c.correct_frequency.to_string() );
+    m_csv.write_field( fixed_to_string(c.correct_frequency.value(), 5) );
     m_csv.write_field( c.sms_confirmation.to_string() );
     m_csv.write_field( std::to_string(c.dmr_mode) );
     m_csv.write_field( std::to_string(c.exclude_channel_from_roaming) );

@@ -18,8 +18,9 @@ using namespace leapus::configuration;
 int main( int argc, const char *argv[]){
 
     channel_map_type channel_map;
-
     config.parse(argc, argv);
+
+    auto test=fixed_point("321.12345", 5);
 
     //
     // Import here
