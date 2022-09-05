@@ -24,6 +24,13 @@ For reference, the Alinco page for this device is here
 Upcoming features: I'm new to DMR and have never used it before, but when I get it figured out, I will look into
 adding support for contacts and so forth.
 
+TODO:
+
+This was originally envisioned as single-purpose, but I don't see why it shouldn't work to add interchange of lots more formats.
+The internal format is geared for the DJ-MD5X devices, but some minor changes would make it more general. Specifically,
+the power levels are the funky "Small", "Low", etc options which do not generalize well to other devices. Doesn't need
+much to begin supporting other data formats, though.
+
 FAQ
 ----
 
@@ -43,7 +50,3 @@ A: This was a bizarre error I encountered, and I fixed it by performing a factor
 	enabled power-on resets in the codeplug. Go into "Optional Setting" in CPS, and enable power-on resets, then
 	flash the device with the resulting codeplug, and now you should be able to factory-reset it during power-up.
 	
-	
-	
-			
-
