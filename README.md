@@ -1,3 +1,5 @@
+MAJOR TO-DO: I just noticed that frequencies written to output are missing leading zeroes to the right of the decimal place, so
+either fix that by hand in a spreadsheet, or wait until I fix the bug. Out of like 300 repeaters, I only had a few to update.
 
 hamcereek v0.1
 --------------
@@ -35,6 +37,7 @@ FAQ
 ----
 
 Q: How do I get Alinco DJ-MD5X CPS working under Linux?
+
 A: Install WINE, and then use "winetricks" to load a bunch of Microsoft components. I'm too lazy to go enumerate them,
 	but it's stuff like the Common Controls, OLE, and the MFC runtime. A Visual Basic runtime might have been needed?
 	You should be able to run the installer for CPS, and it will work, especially once you have the prerequisites from
@@ -44,6 +47,7 @@ A: Install WINE, and then use "winetricks" to load a bunch of Microsoft componen
 	run the Update program directly, after editing the config file to specify 115200bps. That worked for me.
 	
 Q: My PTT sticks whenever CTCSS is enabled for an analog channel
+
 A: This was a bizarre error I encountered, and I fixed it by performing a factory reset on the radio. Maybe its state
 	got corrupted by some invalid value during testing? Who knows. You can factory-reset the device by turning it
 	on while holding in PTT an PF1 (directly below PTT). If that doesn't work, it's probably because you have not
