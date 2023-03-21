@@ -1,6 +1,3 @@
-MAJOR TO-DO: I just noticed that frequencies written to output are missing leading zeroes to the right of the decimal place, so
-either fix that by hand in a spreadsheet, or wait until I fix the bug. Out of like 300 repeaters, I only had a few to update.
-
 hamcereek v0.1
 --------------
 
@@ -25,6 +22,8 @@ For reference, the Alinco page for this device is here
 
 Upcoming features: I'm new to DMR and have never used it before, but when I get it figured out, I will look into
 adding support for contacts and so forth.
+
+* I just fixed a nasty bug which was leaving out the leading zeroes to the right of the decimal place in frequencies
 
 TODO:
 
