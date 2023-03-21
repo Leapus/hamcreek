@@ -104,7 +104,8 @@ PROGRAMS = $(bin_PROGRAMS)
 am_hamcreek_OBJECTS = main.$(OBJEXT) channel.$(OBJEXT) \
 	chirp_channel_file.$(OBJEXT) csv_exception.$(OBJEXT) \
 	csv.$(OBJEXT) exception.$(OBJEXT) string.$(OBJEXT) \
-	field.$(OBJEXT) config.$(OBJEXT) djmd5_file.$(OBJEXT)
+	field.$(OBJEXT) config.$(OBJEXT) djmd5_file.$(OBJEXT) \
+	band_channelgen.$(OBJEXT)
 hamcreek_OBJECTS = $(am_hamcreek_OBJECTS)
 hamcreek_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
@@ -122,11 +123,12 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/channel.Po \
-	./$(DEPDIR)/chirp_channel_file.Po ./$(DEPDIR)/config.Po \
-	./$(DEPDIR)/csv.Po ./$(DEPDIR)/csv_exception.Po \
-	./$(DEPDIR)/djmd5_file.Po ./$(DEPDIR)/exception.Po \
-	./$(DEPDIR)/field.Po ./$(DEPDIR)/main.Po ./$(DEPDIR)/string.Po
+am__depfiles_remade = ./$(DEPDIR)/band_channelgen.Po \
+	./$(DEPDIR)/channel.Po ./$(DEPDIR)/chirp_channel_file.Po \
+	./$(DEPDIR)/config.Po ./$(DEPDIR)/csv.Po \
+	./$(DEPDIR)/csv_exception.Po ./$(DEPDIR)/djmd5_file.Po \
+	./$(DEPDIR)/exception.Po ./$(DEPDIR)/field.Po \
+	./$(DEPDIR)/main.Po ./$(DEPDIR)/string.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -204,7 +206,7 @@ CPP = gcc -E
 CPPFLAGS = -I./include
 CXX = g++
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O0
+CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DPACKAGE_NAME=\"chirp2djmd5\" -DPACKAGE_TARNAME=\"chirp2djmd5\" -DPACKAGE_VERSION=\"0.1\" -DPACKAGE_STRING=\"chirp2djmd5\ 0.1\" -DPACKAGE_BUGREPORT=\"ultrapod333@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"chirp2djmd5\" -DVERSION=\"0.1\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_CSV_H=1
 DEPDIR = .deps
@@ -219,7 +221,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = -g
+LDFLAGS = 
 LIBOBJS = 
 LIBS =  -lcsv
 LTLIBOBJS = 
@@ -284,7 +286,7 @@ top_builddir = .
 top_srcdir = .
 AM_CXXFLAGS = -std=c++17
 hamcreek_SOURCES = main.cpp channel.cpp chirp_channel_file.cpp csv_exception.cpp \
-    csv.cpp exception.cpp string.cpp field.cpp config.cpp djmd5_file.cpp 
+    csv.cpp exception.cpp string.cpp field.cpp config.cpp djmd5_file.cpp band_channelgen.cpp
 
 all: all-am
 
@@ -376,6 +378,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+include ./$(DEPDIR)/band_channelgen.Po # am--include-marker
 include ./$(DEPDIR)/channel.Po # am--include-marker
 include ./$(DEPDIR)/chirp_channel_file.Po # am--include-marker
 include ./$(DEPDIR)/config.Po # am--include-marker
@@ -681,7 +684,8 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-		-rm -f ./$(DEPDIR)/channel.Po
+		-rm -f ./$(DEPDIR)/band_channelgen.Po
+	-rm -f ./$(DEPDIR)/channel.Po
 	-rm -f ./$(DEPDIR)/chirp_channel_file.Po
 	-rm -f ./$(DEPDIR)/config.Po
 	-rm -f ./$(DEPDIR)/csv.Po
@@ -738,7 +742,8 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-		-rm -f ./$(DEPDIR)/channel.Po
+		-rm -f ./$(DEPDIR)/band_channelgen.Po
+	-rm -f ./$(DEPDIR)/channel.Po
 	-rm -f ./$(DEPDIR)/chirp_channel_file.Po
 	-rm -f ./$(DEPDIR)/config.Po
 	-rm -f ./$(DEPDIR)/csv.Po

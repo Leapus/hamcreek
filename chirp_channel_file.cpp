@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream> //debug
 #include <functional>
+#include <algorithm>
 
 #include "string.hpp"
 #include "csv_exception.hpp"
@@ -12,7 +13,8 @@ using namespace std::string_literals;
 using namespace leapus::hamconf;
 using namespace leapus::exception;
 
-chirp_channel_importer::chirp_channel_importer( const std::filesystem::path &path ){
+chirp_channel_importer::chirp_channel_importer( const std::filesystem::path &path ):
+   m_max_ordinal(0){
    csv::CSVFile file(path, *this, std::ios_base::in);
    skip_row(); //Skip the header
    file.parse_all();
@@ -29,12 +31,17 @@ void chirp_channel_importer::field(const std::string &field){
 
 void chirp_channel_importer::record(){
    channels()[tempchan.ordinal]=tempchan;
+   m_max_ordinal=std::max(m_max_ordinal,tempchan.ordinal.value());
    tempchan = {};
    fieldno=0;
 }
 
 channel_map_type &chirp_channel_importer::channels(){
    return m_channel_map;
+}
+
+ordinal_t chirp_channel_importer::max_ordinal() const{
+   return m_max_ordinal;
 }
 
 using cci = chirp_channel_importer;

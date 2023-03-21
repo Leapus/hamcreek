@@ -1,0 +1,41 @@
+/*
+It would be nice if you could define multiple VFO scan ranges for the Alinco MD5J, but you can't.
+You get one range for VHF, one for UHF, and that's it for VFO ranges.
+Governments may offer a bunch of open-use bands, but they can be scattered blocks, so if you're going
+to scan them on the MD5 or otherwise even store the range inside the radio for reference, 
+it seems like you're stuck generating a channel list to fill those band regions.
+Then, you can scan those, and it's also easier to steer clear of the band edges and stay compliant.
+*/
+
+#include <string>
+#include "channel.hpp"
+#include "band_channelgen.hpp"
+
+using namespace leapus::hamconf;
+
+band_channelgen::band_channelgen(ordinal_t startn, std::string name_prefix, freq_t start, freq_t end, freq_t width, power_levels power){
+
+    freq_t hwidth=width/2;
+    auto n=startn;
+
+    //It's bothering me that frequencies are stored in multiples of ten and it would make more sense to just store them as Hz
+    //(TODO)
+    for(freq_t f=start+hwidth; f+hwidth<=end;f+=width){
+        auto tf=f/10;
+        channel chan;
+        chan.ordinal=n++;
+        chan.name=name_prefix + " " +  fixed_to_string(tf,5);
+        chan.rx_freq=tf;
+        chan.tx_freq=tf;
+        chan.type=analog;
+        chan.tx_power=power;
+        chan.channel_mode=NFM;
+        chan.squelch_mode=Carrier;
+        chan.scan_list=name_prefix;
+        m_channels.push_back(chan);
+    }
+}
+
+const band_channelgen::collection_type &band_channelgen::channels() const{
+    return m_channels;
+}

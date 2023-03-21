@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <sstream>
 #include "string.hpp"
 #include "field.hpp"
@@ -53,12 +54,9 @@ std::string freq_field::to_string(int decimal) const{
     return std::to_string(l) + "." + std::to_string(r);*/
 }
 
-
-
 std::string onoff_field::to_string() const{
     return value() ? "On" : "Off";
 }
-
 
 //Positive integer exponents
 ulong leapus::hamconf::intpow(ulong x, int p){
@@ -74,9 +72,14 @@ ulong leapus::hamconf::intpow(ulong x, int p){
 }
 
 std::string leapus::hamconf::fixed_to_string(ulong x, int dec){
+
+    std::stringstream ss;
     auto l = x / intpow(10,dec);
     auto r = x % intpow(10, dec);
-    return std::to_string(l) + "." + std::to_string(r);
+
+    ss << l << "." << std::setw(dec) << std::setfill('0') << r;
+    return ss.str();
+    //return std::to_string(l) + "." + std::to_string(r);
 }
 
 ulong leapus::hamconf::fixed_point(const std::string &str, int dec_dig){

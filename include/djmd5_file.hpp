@@ -25,7 +25,7 @@ protected:
 
 public:
     djmd5_channel_exporter(const std::filesystem::path &);
-    void write( leapus::hamconf::channel_map_type &channels);
+    void write( const leapus::hamconf::channel_map_type &channels);
 };
 
 }

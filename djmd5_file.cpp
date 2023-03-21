@@ -40,7 +40,7 @@ void djmd5_channel_exporter::write_header(){
     m_csv.end_record();
 }
 
-void djmd5_channel_exporter::write( leapus::hamconf::channel_map_type &channels){
+void djmd5_channel_exporter::write( const leapus::hamconf::channel_map_type &channels){
     write_header();
 
     for(const auto &r : channels){

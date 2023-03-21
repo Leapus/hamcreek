@@ -35,7 +35,7 @@ public:
     freq_field tx_freq;
     channel_type_field type;
     tx_power_field tx_power;
-    //freq_field bandwidth; //Already implied by the moduklation type
+    //freq_field bandwidth; //Already implied by the modulation type
 
     //This is broken down into extra fields for ease of representation
     //CTCSS codes will be stored as integer tenths of a Hz because that is their precision

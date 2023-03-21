@@ -20,6 +20,7 @@ class chirp_channel_importer:public csv::CSVParser{
     using Th=chirp_channel_importer;
 
     channel_map_type m_channel_map;
+    ordinal_t m_max_ordinal; //For appending
 
     //Field handlers
     void ordinal(const std::string &);
@@ -70,6 +71,7 @@ protected:
 public:
     chirp_channel_importer( const std::filesystem::path & );
     channel_map_type &channels();
+    ordinal_t max_ordinal() const;
 };
 
 }
