@@ -13,6 +13,18 @@
 namespace leapus::string{
 std::string toupper(const std::string &);
 
+template<typename T>
+T to_integral(const std::string &str);
+
+template<>
+int to_integral(const std::string &str);
+
+template<>
+long to_integral(const std::string &str);
+
+template<>
+unsigned long to_integral(const std::string &str);
+
 //A temporary stringsream which is easy to insert into and converts to a string so that you can do f(mkstring() << "abcdefg" << endl)
 template<typename CharT = char, class Traits=std::char_traits<CharT>, class Alloc=std::allocator<CharT>>
 class mkstring{

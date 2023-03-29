@@ -48,7 +48,7 @@ void djmd5_channel_exporter::write( const leapus::hamconf::channel_map_type &cha
     }
 }
 
-std::string mk_tone_string(const freq_field &ctcss, const freq_field &dcstone, tone_code_types type, bool pol){
+std::string mk_tone_string(const freq_field &ctcss, const dts_field &dcstone, tone_code_types type, bool pol){
 
     std::stringstream ss;
     std::string tmp;
@@ -58,8 +58,10 @@ std::string mk_tone_string(const freq_field &ctcss, const freq_field &dcstone, t
             break;
 
         //These usually have a precision of 100kHz
+        //Not sure why I wrote above comment. CTCSS codes are usually Hz with one decimal place for tenths
         case CTCSS:
-            return fixed_to_string(ctcss.value(),5);
+            //return fixed_to_string(ctcss.value(),5);
+            return ctcss.value().to_string(1);
             break;
 
         case DCS:
@@ -67,7 +69,7 @@ std::string mk_tone_string(const freq_field &ctcss, const freq_field &dcstone, t
             ss.fill('0');
             ss.setf(std::ios_base::right, std::ios_base::adjustfield);
             ss.width(3);
-            ss << dcstone;
+            ss << dcstone.value();
             tmp= "D"s + ss.str();
             if(pol)
                 return tmp + "N";
@@ -92,8 +94,8 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     m_csv.write_field( c.name );
     //m_csv.write_field( c.rx_freq.to_string(6) );
     //m_csv.write_field( c.tx_freq.to_string(6) );
-    m_csv.write_field( fixed_to_string(c.rx_freq.value(),5) );
-    m_csv.write_field( fixed_to_string(c.tx_freq.value(),5) );
+    m_csv.write_field( c.rx_mhz.value().to_string(5) );
+    m_csv.write_field( c.tx_mhz.value().to_string(5) );
 
     switch(c.type){
         case analog:
@@ -144,8 +146,8 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
             break;
     }
 
-    m_csv.write_field( mk_tone_string(c.ctcss_rx_code, c.dts_code, c.rx_code_type, c.rx_code_polarity) );
-    m_csv.write_field( mk_tone_string(c.ctcss_tx_code, c.dts_code, c.tx_code_type, c.tx_code_polarity) );
+    m_csv.write_field( mk_tone_string(c.ctcss_rx_code_hz, c.dts_code, c.rx_code_type, c.rx_code_polarity) );
+    m_csv.write_field( mk_tone_string(c.ctcss_tx_code_hz, c.dts_code, c.tx_code_type, c.tx_code_polarity) );
 
     //Ok, so this defaults to a default contact named "Contact 1" when empty or not defined.
     //TODO: Find out if this will work with the "None" convention, or blank. Might not, as firmware is super flaky.
@@ -261,7 +263,7 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     //TODO. APRS report type. Assume off for now.
     m_csv.write_field( "Off" );
     m_csv.write_field( std::to_string(c.digital_aprs_report_channel) );
-    m_csv.write_field( fixed_to_string(c.correct_frequency.value(), 5) );
+    m_csv.write_field( c.correct_mhz.value().to_string(5));
     m_csv.write_field( c.sms_confirmation.to_string() );
     m_csv.write_field( std::to_string(c.dmr_mode) );
     m_csv.write_field( std::to_string(c.exclude_channel_from_roaming) );

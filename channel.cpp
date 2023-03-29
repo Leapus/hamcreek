@@ -6,17 +6,17 @@ using namespace leapus::hamconf;
 leapus::hamconf::channel::channel():
     ordinal(0),
     name(),
-    rx_freq(freq_t(0)),
-    tx_freq(freq_t(0)),
+    rx_mhz(),
+    tx_mhz(),
     type( analog ),
     tx_power(High),
     //bandwidth(narrow),
     
     tx_code_type(ToneNone),
-    ctcss_tx_code(670),             //Lowest
+    ctcss_tx_code_hz(67),             //Lowest
     tx_code_polarity(true),         //Usually negative,
     rx_code_type(ToneNone),
-    ctcss_rx_code(670),
+    ctcss_rx_code_hz(67),
     rx_code_polarity(true),
     contact(),
     contact_call_type(group_call),
@@ -41,7 +41,7 @@ leapus::hamconf::channel::channel():
     call_confirmation(false),
     talk_around(false),
     work_alone(false),
-    custom_ctss(0),
+    custom_ctss_hz(),
     twotone_decode(0),              //Defaults to 0
     ranging(false),
     through_mode(false),
@@ -50,7 +50,7 @@ leapus::hamconf::channel::channel():
     digital_aprs_ptt(false),
     aprs_report_type(aprsOff),
     digital_aprs_report_channel(1),     //CPS defaults to 1
-    correct_frequency(0),
+    correct_mhz(),
     sms_confirmation(false),
     dmr_mode(0),
     exclude_channel_from_roaming(0)     //Seems like it should be boolean, but is oddly numeric. Defaults to 0.   

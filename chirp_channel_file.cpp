@@ -56,7 +56,7 @@ void cci::name(const std::string &v){
 
 //Channel frequencies have 5 decimal places, accurate to 10Hz
 void cci::frequency(const std::string &v){
-   tempchan.rx_freq = fixed_point(v, 5);
+   tempchan.rx_mhz = freq_field{v};
    //tempchan.rx_freq = std::stod(v) * 1000000;
 }
 
@@ -102,26 +102,26 @@ void cci::offset(const std::string &v){
 
    //Simplex, single-frequency
    if(m_duplex == None){
-      tempchan.tx_freq = tempchan.rx_freq;
+      tempchan.tx_mhz = tempchan.rx_mhz;
       return;
    }
    
    //auto offs = std::stod(v) * 1000000;
    //Have not seen offsets with more precision than 100kHz, but 5 decimal places is for consistency
-   auto offs = fixed_point( v, 5);
+   auto offs=freq_field::value_type(v);
 
    //Absolute tx freq given
    if(m_duplex == Split){
-      tempchan.tx_freq = offs;
+      tempchan.tx_mhz = offs;
       return;
    }
 
    //Relative offset in MHz
    if(m_duplex == Positive){
-      tempchan.tx_freq = tempchan.rx_freq + offs;
+      tempchan.tx_mhz = tempchan.rx_mhz.value() + offs;
    }
    else if(m_duplex == Negative){
-      tempchan.tx_freq = tempchan.rx_freq - offs;
+      tempchan.tx_mhz = tempchan.rx_mhz.value() - offs;
    }
    else{
       throw std::runtime_error("Oops. How did we get an unknown duplex value?");
@@ -171,12 +171,13 @@ std::string cci::make_tone_string( const std::string &v ) const{
 }
 */
 
+//CTCSS tones are usually expressed as Hz with tenth precision
 void cci::rx_tone(const std::string &v){
-   tempchan.ctcss_rx_code = fixed_point(v, 5);
+   tempchan.ctcss_rx_code_hz = {v};
 }
 
 void cci::tx_tone(const std::string &v){
-   tempchan.ctcss_tx_code = fixed_point(v,5);
+   tempchan.ctcss_tx_code_hz = {v};
 }
 
 void cci::dtcs_code(const std::string &v){

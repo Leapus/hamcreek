@@ -31,8 +31,8 @@ public:
     channel();
     field<ordinal_t> ordinal;
     field<std::string> name;
-    freq_field rx_freq;
-    freq_field tx_freq;
+    freq_field rx_mhz;
+    freq_field tx_mhz;
     channel_type_field type;
     tx_power_field tx_power;
     //freq_field bandwidth; //Already implied by the modulation type
@@ -40,14 +40,14 @@ public:
     //This is broken down into extra fields for ease of representation
     //CTCSS codes will be stored as integer tenths of a Hz because that is their precision
     field<tone_code_types> tx_code_type;
-    freq_field ctcss_tx_code; //Digital code or tone frequency
+    freq_field ctcss_tx_code_hz; //Digital code or tone frequency
     field<bool> tx_code_polarity; //true for negative
 
     field<tone_code_types> rx_code_type;
-    freq_field ctcss_rx_code;
+    freq_field ctcss_rx_code_hz;
     field<bool> rx_code_polarity;
 
-    freq_field dts_code;
+    dts_field dts_code;
     field<channel_mode_types> channel_mode;
     field<std::string> contact;
     field<contact_call_types> contact_call_type;
@@ -72,7 +72,7 @@ public:
     onoff_field call_confirmation;
     onoff_field talk_around;
     onoff_field work_alone;
-    freq_field custom_ctss;
+    freq_field custom_ctss_hz;
     field<uint> twotone_decode;
     onoff_field ranging;
     onoff_field through_mode;
@@ -81,7 +81,7 @@ public:
     onoff_field digital_aprs_ptt;
     aprs_report_type_field aprs_report_type;
     field<int> digital_aprs_report_channel;
-    freq_field correct_frequency;
+    freq_field correct_mhz;
     onoff_field sms_confirmation;
     field<int> dmr_mode;
     field<int> exclude_channel_from_roaming;

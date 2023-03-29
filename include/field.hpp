@@ -1,6 +1,7 @@
 /* A field used in the internal data structures */
 
 #pragma once
+#include "fixed_point.hpp"
 
 namespace leapus::hamconf{
 
@@ -15,14 +16,13 @@ enum bandwidths:freq_t{
     wide=25000
 };
 
-
 //Using only integer math, parse a decimal string 
 //returning a certain number of fixed decimal digits, as an integer.
 //We don't observe localization. The decimal point is the period character.
 //We don't need signed numbers. Offsets can be negative, but their sign
 //has its own field.
-ulong fixed_point(const std::string &str, int dec_dig);
-std::string fixed_to_string(ulong x, int dec);
+//ulong fixed_point(const std::string &str, int dec_dig);
+//std::string fixed_to_string(ulong x, int dec);
 
 //This device is always FM, and A/D is the only distinction
 //It also does mixed A/D transmit/receive, so TODO to find the strings for that
@@ -113,7 +113,12 @@ public:
     } 
 };
 
-class freq_field:public field<freq_t>{
+class dts_field:public field<int>{
+public:
+    using field<int>::field;
+};
+
+class freq_field:public field<fixed_point<freq_t>>{
 public:
     using field::field;
     std::string to_string(int decimal=3) const;
@@ -160,10 +165,8 @@ public:
     using field::field;    
 };
 
-
 //Parse a numeric string to integral tenths of a Hz
 //freq_t stringtohztenths( const std::string & );
-
 ulong intpow(ulong x, int p);
 
 }

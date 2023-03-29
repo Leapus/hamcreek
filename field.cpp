@@ -29,6 +29,11 @@ freq_t leapus::hamconf::stringtohztenths( const std::string &v ){
 }
 */
 
+std::string freq_field::to_string(int dec) const{
+    return value().to_string(dec);
+}
+
+/*
 std::string freq_field::to_string(int decimal) const{
 
     std::stringstream ss;
@@ -51,13 +56,16 @@ std::string freq_field::to_string(int decimal) const{
     freq_t m = decimal * 10;
     freq_t l = value() / m;
     freq_t r = value() %  m;
-    return std::to_string(l) + "." + std::to_string(r);*/
+    return std::to_string(l) + "." + std::to_string(r); 
+    * /
 }
+*/
 
 std::string onoff_field::to_string() const{
     return value() ? "On" : "Off";
 }
 
+/*
 //Positive integer exponents
 ulong leapus::hamconf::intpow(ulong x, int p){
 
@@ -70,7 +78,10 @@ ulong leapus::hamconf::intpow(ulong x, int p){
     }
     return result;
 }
+*/
 
+/*
+//Redundant
 std::string leapus::hamconf::fixed_to_string(ulong x, int dec){
 
     std::stringstream ss;
@@ -81,8 +92,10 @@ std::string leapus::hamconf::fixed_to_string(ulong x, int dec){
     return ss.str();
     //return std::to_string(l) + "." + std::to_string(r);
 }
+*/
 
-ulong leapus::hamconf::fixed_point(const std::string &str, int dec_dig){
+/*
+ulong fixed_point(const std::string &str, int dec_dig){
     ulong result;
     ulong decnum;
     int dec, need_dec;
@@ -115,3 +128,5 @@ ulong leapus::hamconf::fixed_point(const std::string &str, int dec_dig){
     
     return std::stoul(str.substr(0,dec)) * intpow(10,dec_dig) + decnum;   
 }
+*/
+

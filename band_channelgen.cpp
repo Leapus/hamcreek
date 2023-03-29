@@ -18,15 +18,12 @@ band_channelgen::band_channelgen(ordinal_t startn, std::string name_prefix, freq
     freq_t hwidth=width/2;
     auto n=startn;
 
-    //It's bothering me that frequencies are stored in multiples of ten and it would make more sense to just store them as Hz
-    //(TODO)
     for(freq_t f=start+hwidth; f+hwidth<=end;f+=width){
-        auto tf=f/10;
         channel chan;
         chan.ordinal=n++;
-        chan.name=name_prefix + " " +  fixed_to_string(tf,5);
-        chan.rx_freq=tf;
-        chan.tx_freq=tf;
+        chan.rx_mhz=fixed_point<freq_t>{f,6};
+        chan.name=name_prefix + " " +  chan.rx_mhz.value().to_string(5);
+        chan.tx_mhz=chan.rx_mhz;
         chan.type=analog;
         chan.tx_power=power;
         chan.channel_mode=NFM;
