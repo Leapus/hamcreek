@@ -13,7 +13,7 @@ class band_channelgen{
     collection_type m_channels;
 
 public:
-    band_channelgen(ordinal_t starti, std::string name_prefix, freq_t start, freq_t end, freq_t width, power_levels power);
+    band_channelgen(ordinal_t starti, std::string name_prefix, freq_t start, freq_t end, freq_t width, power_t power);
     const collection_type &channels() const;
 };
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <utility>
 #include <string>
 #include <sstream>
@@ -56,7 +57,7 @@ class fixed_point{
         str2.erase(dpos, (std::string::size_type)1);
         value_type b=leapus::string::to_integral<value_type>(str2);
         int x=log10(a), y=log10(b);
-        return { a, x-y };
+        return { a, y-x };
     }
 
 public:
@@ -65,6 +66,8 @@ public:
         m_dec(dec),
         m_scale(pow10(1,dec)),
         m_value(v){
+            
+            assert(m_scale >= 1);
     }
 
     fixed_point(const std::string &str):

@@ -13,6 +13,13 @@
 
 namespace leapus::hamconf{
 
+enum djmd5_power_levels:power_t{
+    Small=200,
+    Low=1000,
+    Middle=2500,
+    High=5000
+};
+
 class djmd5_channel_exporter:public csv::CSVParser{
     leapus::csv::CSVFile m_csv;
     void write_header();

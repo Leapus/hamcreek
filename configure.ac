@@ -16,5 +16,10 @@ AC_CHECK_LIB([csv],
         LIBS="$LIBS -lcsv",
         AC_MSG_ERROR([*** libcsv library not found!]))
 
+AC_CHECK_LIB([jsoncpp],
+        [_ZNK4Json5Value8isStringEv],
+        LIBS="$LIBS -ljsoncpp",
+        AC_MSG_ERROR([*** libjsoncpp library not found!]))
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

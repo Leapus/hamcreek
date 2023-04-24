@@ -10,6 +10,7 @@ using ulong = unsigned long;
 
 using ordinal_t = uint;
 using freq_t = ulong;
+using power_t = int; //In milliwatts
 
 enum bandwidths:freq_t{
     narrow=12500,
@@ -27,10 +28,23 @@ enum bandwidths:freq_t{
 //This device is always FM, and A/D is the only distinction
 //It also does mixed A/D transmit/receive, so TODO to find the strings for that
 enum channel_types{
-    analog,
-    digital
+    ChanTypeA,      //Analog
+    ChanTypeD,      //Digital
+    ChanTypeADA,    //Mixed A/D RX, A TX
+    ChanTypeADD     //Mixed A/D RX, D TX
 };
 
+//These are the three DMR Types supported by the Alicno CPS programming software
+//AFAIK double-slot always implies a simplex channel on that device, and we name it accordingly.
+enum dmr_types{
+    DMRSimplex,
+    DMRRepeater,
+    DMRDoubleSlotSimplex
+};
+
+//Changing this to instead remember the power level in milliwatts because this arrangement is just silly.
+//Only when exporting do we convert to this sort of nonsense, like what the MD5-J firmware demands.
+/*
 //As named in the device UI
 enum power_levels{
     Small,
@@ -38,6 +52,7 @@ enum power_levels{
     Middle,
     High
 };
+*/
 
 //TODO: Other values?
 enum contact_call_types{
@@ -76,9 +91,12 @@ enum tone_code_types{
     DCS
 };
 
+
+//There were three kinds of FM in here, denoting different bandwidths, but there's already a bandwidth field.
+//So, that's redundant. We're only concerned with mode here, which implies modulation and possibly digital encoding.
 enum channel_mode_types{
     FM,
-    NFM,
+    NFM,    //12.5kHz
     WFM,
     AM,
     DV,     //D-STAR
@@ -87,7 +105,8 @@ enum channel_mode_types{
 };
 
 //Seems to be a choice between "Normal" and "Enhanced"
-//Does this thing TX on non-amateur ranges? Haven't checked, but it does have bandwidth outside.
+//Does this thing TX on non-amateur ranges?
+//(Yes, the DJ-MD5X indeed transmits successfully on the Mexican open bands, and probably others)
 enum aes_types{
     aes_normal,
     aes_enhanced
@@ -137,7 +156,7 @@ class channel_type_field:public field<channel_types>{
 public:
     using field::field;
 };
-class tx_power_field:public field<power_levels>{
+class tx_power_field:public field<power_t>{
 public:
     using field::field;
 };
@@ -163,6 +182,11 @@ public:
 class aprs_report_type_field:public field<aprs_report_types>{
 public:
     using field::field;    
+};
+
+class dmr_type_field:public field<dmr_types>{
+public:
+    using field::field;
 };
 
 //Parse a numeric string to integral tenths of a Hz

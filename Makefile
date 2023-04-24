@@ -101,11 +101,12 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_hamcreek_OBJECTS = main.$(OBJEXT) channel.$(OBJEXT) \
-	chirp_channel_file.$(OBJEXT) csv_exception.$(OBJEXT) \
-	csv.$(OBJEXT) exception.$(OBJEXT) string.$(OBJEXT) \
-	field.$(OBJEXT) config.$(OBJEXT) djmd5_file.$(OBJEXT) \
-	band_channelgen.$(OBJEXT)
+am_hamcreek_OBJECTS = main.$(OBJEXT) console.$(OBJEXT) \
+	channel.$(OBJEXT) chirp_channel_file.$(OBJEXT) \
+	csv_exception.$(OBJEXT) csv.$(OBJEXT) exception.$(OBJEXT) \
+	string.$(OBJEXT) field.$(OBJEXT) config.$(OBJEXT) \
+	djmd5_file.$(OBJEXT) band_channelgen.$(OBJEXT) \
+	repeaterbook_json.$(OBJEXT)
 hamcreek_OBJECTS = $(am_hamcreek_OBJECTS)
 hamcreek_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
@@ -125,10 +126,11 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/band_channelgen.Po \
 	./$(DEPDIR)/channel.Po ./$(DEPDIR)/chirp_channel_file.Po \
-	./$(DEPDIR)/config.Po ./$(DEPDIR)/csv.Po \
-	./$(DEPDIR)/csv_exception.Po ./$(DEPDIR)/djmd5_file.Po \
-	./$(DEPDIR)/exception.Po ./$(DEPDIR)/field.Po \
-	./$(DEPDIR)/main.Po ./$(DEPDIR)/string.Po
+	./$(DEPDIR)/config.Po ./$(DEPDIR)/console.Po \
+	./$(DEPDIR)/csv.Po ./$(DEPDIR)/csv_exception.Po \
+	./$(DEPDIR)/djmd5_file.Po ./$(DEPDIR)/exception.Po \
+	./$(DEPDIR)/field.Po ./$(DEPDIR)/main.Po \
+	./$(DEPDIR)/repeaterbook_json.Po ./$(DEPDIR)/string.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -206,7 +208,7 @@ CPP = gcc -E
 CPPFLAGS = -I./include
 CXX = g++
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O2
+CXXFLAGS = -O0 -g
 CYGPATH_W = echo
 DEFS = -DPACKAGE_NAME=\"chirp2djmd5\" -DPACKAGE_TARNAME=\"chirp2djmd5\" -DPACKAGE_VERSION=\"0.1\" -DPACKAGE_STRING=\"chirp2djmd5\ 0.1\" -DPACKAGE_BUGREPORT=\"ultrapod333@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"chirp2djmd5\" -DVERSION=\"0.1\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_CSV_H=1
 DEPDIR = .deps
@@ -223,7 +225,7 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS =  -lcsv
+LIBS =  -lcsv -ljsoncpp
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} '/home/phi/hamcreek/missing' makeinfo
 MKDIR_P = /usr/bin/mkdir -p
@@ -285,8 +287,8 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = .
 AM_CXXFLAGS = -std=c++17
-hamcreek_SOURCES = main.cpp channel.cpp chirp_channel_file.cpp csv_exception.cpp \
-    csv.cpp exception.cpp string.cpp field.cpp config.cpp djmd5_file.cpp band_channelgen.cpp
+hamcreek_SOURCES = main.cpp console.cpp channel.cpp chirp_channel_file.cpp csv_exception.cpp \
+    csv.cpp exception.cpp string.cpp field.cpp config.cpp djmd5_file.cpp band_channelgen.cpp repeaterbook_json.cpp
 
 all: all-am
 
@@ -382,12 +384,14 @@ include ./$(DEPDIR)/band_channelgen.Po # am--include-marker
 include ./$(DEPDIR)/channel.Po # am--include-marker
 include ./$(DEPDIR)/chirp_channel_file.Po # am--include-marker
 include ./$(DEPDIR)/config.Po # am--include-marker
+include ./$(DEPDIR)/console.Po # am--include-marker
 include ./$(DEPDIR)/csv.Po # am--include-marker
 include ./$(DEPDIR)/csv_exception.Po # am--include-marker
 include ./$(DEPDIR)/djmd5_file.Po # am--include-marker
 include ./$(DEPDIR)/exception.Po # am--include-marker
 include ./$(DEPDIR)/field.Po # am--include-marker
 include ./$(DEPDIR)/main.Po # am--include-marker
+include ./$(DEPDIR)/repeaterbook_json.Po # am--include-marker
 include ./$(DEPDIR)/string.Po # am--include-marker
 
 $(am__depfiles_remade):
@@ -688,12 +692,14 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/channel.Po
 	-rm -f ./$(DEPDIR)/chirp_channel_file.Po
 	-rm -f ./$(DEPDIR)/config.Po
+	-rm -f ./$(DEPDIR)/console.Po
 	-rm -f ./$(DEPDIR)/csv.Po
 	-rm -f ./$(DEPDIR)/csv_exception.Po
 	-rm -f ./$(DEPDIR)/djmd5_file.Po
 	-rm -f ./$(DEPDIR)/exception.Po
 	-rm -f ./$(DEPDIR)/field.Po
 	-rm -f ./$(DEPDIR)/main.Po
+	-rm -f ./$(DEPDIR)/repeaterbook_json.Po
 	-rm -f ./$(DEPDIR)/string.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -746,12 +752,14 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/channel.Po
 	-rm -f ./$(DEPDIR)/chirp_channel_file.Po
 	-rm -f ./$(DEPDIR)/config.Po
+	-rm -f ./$(DEPDIR)/console.Po
 	-rm -f ./$(DEPDIR)/csv.Po
 	-rm -f ./$(DEPDIR)/csv_exception.Po
 	-rm -f ./$(DEPDIR)/djmd5_file.Po
 	-rm -f ./$(DEPDIR)/exception.Po
 	-rm -f ./$(DEPDIR)/field.Po
 	-rm -f ./$(DEPDIR)/main.Po
+	-rm -f ./$(DEPDIR)/repeaterbook_json.Po
 	-rm -f ./$(DEPDIR)/string.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

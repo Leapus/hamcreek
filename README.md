@@ -1,6 +1,16 @@
 hamcereek v0.1
 --------------
 
+DISCLAIMER: 
+1) You understand that this program automates the generation of channel definitions and configurations for radio transcievers.
+2) You understand that the acceptable usage of RF or radio bands is usually regulated by the government, and
+   that limitations imposed, among others, may include frequency, transmitter power, modulation type, signal bandwidth, content type, and: stipulations against encryption, repeating, networking, or coupling to other networks or mediums (telephone, internet, etc.)
+3) You understand that your rights to transmit, and maybe even recieve, could be dependent on licensing and certification in your jurisdiction
+4) It's your responsibility to check the resulting configuration of your radio to ensure that operation of your radio does not violate the law
+
+
+ANYWAY...
+
 hamcreek is going to be an open-ended amateur radio configuration converter, assuming anyone else contributes to it,
 because I only have one radio to test and develop for, for the forseeable future. Currently this only does one conversion:
 It converts channel definitions from CHIRP CSV format to the CSV import format used by the DJ-MD5XT(G) CPS software.
@@ -20,6 +30,11 @@ You can obtain bulk exports of channel data in CHIRP format from RepeaterBook.co
 For reference, the Alinco page for this device is here
 (https://www.remtronix.com/land-mobile-radio/digital-radios/dj-md5xt/)
 
+Added the -MEX switch which populates the Mexican open-use band ranges with channel definitions. The bands' width seems to be a
+multiple of the channel bandwidth, so it looks like they are meant to be divided up into channels that way. In my experience, these
+bands are usually used by businesses, but they seem to be legally defined as free-use, so you can get on VHF and UHF right away,
+while you are waiting for your ham license to come through. No repeaters allowed here, though.
+
 Upcoming features: I'm new to DMR and have never used it before, but when I get it figured out, I will look into
 adding support for contacts and so forth.
 
@@ -28,9 +43,8 @@ adding support for contacts and so forth.
 TODO:
 
 This was originally envisioned as single-purpose, but I don't see why it shouldn't work to add interchange of lots more formats.
-The internal format is geared for the DJ-MD5X devices, but some minor changes would make it more general. Specifically,
-the power levels are the funky "Small", "Low", etc options which do not generalize well to other devices. Doesn't need
-much to begin supporting other data formats, though.
+The internal format is geared for the DJ-MD5X devices, but it should work readily for other devices. The main problem was the device-specific
+way the power levels were tracked, but that's fixed.
 
 FAQ
 ----

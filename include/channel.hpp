@@ -38,9 +38,8 @@ public:
     //freq_field bandwidth; //Already implied by the modulation type
 
     //This is broken down into extra fields for ease of representation
-    //CTCSS codes will be stored as integer tenths of a Hz because that is their precision
     field<tone_code_types> tx_code_type;
-    freq_field ctcss_tx_code_hz; //Digital code or tone frequency
+    freq_field ctcss_tx_code_hz;  //Digital code or tone frequency
     field<bool> tx_code_polarity; //true for negative
 
     field<tone_code_types> rx_code_type;
@@ -65,7 +64,7 @@ public:
     reference_field receive_group_list;
     onoff_field tx_prohibit;
     onoff_field reverse;
-    onoff_field simplex_tdma;
+    //onoff_field simplex_tdma;
     onoff_field tdma_adaptive;
     field<aes_types> aes_encryption;
     onoff_field digital_encryption;
@@ -75,7 +74,29 @@ public:
     freq_field custom_ctss_hz;
     field<uint> twotone_decode;
     onoff_field ranging;
-    onoff_field through_mode;
+
+    //UPDATE: I decided the below MD5JX arrangement is demented and that the imposition of that kind of nonsense
+    //belongs in the device-specific code for the device that demands it. Maybe it would make some sort of
+    //sense if they'd bothered to document it, but they didn't. So, the intermediate format will be sane,
+    //and then we convert to this Rube Goldberg shit when exporting.
+    //
+    //DMR mode is rather inscrutable and is expressed through a combination of the "DMR Mode",
+    //"Simplex TDMA", and "Through Mode" fields.
+    //Experimentally determined mappings between the CPS "DMR Mode" field and its CSV output:
+    //
+    //Simplex   DMR Mode=0, Simplex TDMA=Off, Through Mode=On
+    //Repeater  DMR Mode=0, Simplex TDMA=Off, Through Mode=Off
+    //Double-Slot DMR Mode=2,Simplex TDMA=On, Through Mode=On
+    //
+    // So, then "DMR Mode" is always zero, except for double-slot mode which sets it to 2.
+    // "Simplex TDMA" seems to be redundant with DMR Mode. It turns on to enable Time Division Multiple Access
+    // which is synonymous with double-slotting, so it's not clear why you need both, but whatever.
+    // I have no idea what "Through Mode" means and it's maybe some commentary as to whether it's a peer-to-peer
+    // connection, but then you would think double-slot implies a repeater as well, so who the hell knows.
+    // Since "Simplex TDMA" comes on for double-slot, that might mean that double-slot is always simplex without a repeater.
+    // This is the monkey-see-monkey-do territory of reverse-engineering. Oh well.
+
+    //onoff_field through_mode;
     onoff_field digiaprs_rx;
     onoff_field analog_aprs_ptt;
     onoff_field digital_aprs_ptt;
@@ -83,8 +104,9 @@ public:
     field<int> digital_aprs_report_channel;
     freq_field correct_mhz;
     onoff_field sms_confirmation;
-    field<int> dmr_mode;
-    field<int> exclude_channel_from_roaming;
+    onoff_field exclude_channel_from_roaming;
+    //field<int> dmr_mode;
+    dmr_type_field dmr_type;
     field<std::string> comment;
 
     //Probably don't need this if we're going to contemplate adding additional export formats

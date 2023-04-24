@@ -1,10 +1,13 @@
 #include <string>
 #include "csv.hpp"
 #include "djmd5_file.hpp"
+#include "lte_dictionary.hpp"
 
 using namespace std::string_literals;
 using namespace leapus;
 using namespace leapus::hamconf;
+
+lte_dictionary<power_t, std::string> power_settings = { {Small, "Small"}, {Low, "Low"}, {Middle, "Middle"}, {High, "High"}};
 
 djmd5_channel_exporter::djmd5_channel_exporter(const std::filesystem::path &path):
     m_csv(path, *this, std::ios_base::out){
@@ -20,9 +23,13 @@ void djmd5_channel_exporter::record(){
 }
 */
 
-
 void djmd5_channel_exporter::write_header(){
     //Happens to work conveniently to paste the literal CSV into an array initializer
+
+    //Experimentally determined that the "Exclude channel from roaming" and "DMR Mode" headings appear to be swapped,
+    //so, we're going to take a bit of license here, and output them correctly, since it's likely
+    //that the CPS software doesn't even look at the heading contents anyway. It will save a lot of confusion
+    //for anyone who is reading or editing the CSV file by hand.
     static constexpr  const char *headings[] =
         {"No.","Channel Name","Receive Frequency","Transmit Frequency","Channel Type","Transmit Power",
         "Band Width","CTCSS/DCS Decode","CTCSS/DCS Encode","Contact","Contact Call Type","Radio ID","Busy Lock/TX Permit",
@@ -30,7 +37,7 @@ void djmd5_channel_exporter::write_header(){
         "Receive Group List","TX Prohibit","Reverse","Simplex TDMA","TDMA Adaptive","AES Encryption",
         "Digital Encryption","Call Confirmation","Talk Around","Work Alone","Custom CTCSS","2TONE Decode","Ranging",
         "Through Mode","Digi APRS RX","Analog APRS PTT Mode","Digital APRS PTT Mode","APRS Report Type",
-        "Digital APRS Report Channel","Correct Frequency[Hz]","SMS Confirmation","DMR MODE","Exclude channel from roaming"};
+        "Digital APRS Report Channel","Correct Frequency[Hz]","SMS Confirmation","Exclude channel from roaming","DMR MODE"};
     
     //We write it again as fields using the API in order to be consistent, perhaps mostly with respect to delimiters
     bool first=true;
@@ -97,33 +104,36 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     m_csv.write_field( c.rx_mhz.value().to_string(5) );
     m_csv.write_field( c.tx_mhz.value().to_string(5) );
 
+    std::string typestr;
     switch(c.type){
-        case analog:
-            m_csv.write_field("A-Analog");
+        case ChanTypeA:
+            typestr="A-Analog";
             break;
 
-        case digital:
-            m_csv.write_field("D-Digital");
+        case ChanTypeD:
+            typestr="D-Digital";
             break;
+
+        case ChanTypeADA:
+            typestr="A+D TX A";
+            break;
+        
+        case ChanTypeADD:
+            typestr="D+A TX D";
+            break;
+        
+        default:
+            throw std::range_error("Invalid channel type number: " + std::to_string(c.type));
+
     }
+    m_csv.write_field(typestr);
 
-    switch(c.tx_power){
-        case Small:
-            m_csv.write_field("Small");
-            break;
+    power_t tx_power=c.tx_power;
+    //Default to max power of 5W if none was specified
+    if(tx_power == 0)
+        tx_power = 5000;
 
-        case Low:
-            m_csv.write_field("Low");
-            break;
-
-        case Middle:
-            m_csv.write_field("Mid");
-            break;
-
-        case High:
-            m_csv.write_field("High");
-            break;
-    }
+    m_csv.write_field( power_settings[tx_power] );
 
     //bandwidth field
     switch(c.channel_mode){
@@ -170,7 +180,6 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     }
 
     m_csv.write_field(c.radio_id);
-
 
     auto tmplock = c.busy_lock;
     //This looked like it was going to be necessary, but it seems that the squelch level
@@ -229,7 +238,32 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     
     m_csv.write_field( c.tx_prohibit.to_string() );
     m_csv.write_field( c.reverse.to_string() );
-    m_csv.write_field( c.simplex_tdma.to_string() );
+
+    //Decide a bunch of magic nonsense DMR-related fields in imitation of CPS' behavior
+    leapus::hamconf::field<int> dmr_mode;
+    onoff_field simplex_tdma, through_mode;
+
+    switch(c.dmr_type){
+        case DMRSimplex:
+            dmr_mode=0;
+            simplex_tdma=false;
+            through_mode=true;
+            break;
+        case DMRRepeater:
+            dmr_mode=0;
+            simplex_tdma=false;
+            through_mode=false;
+            break;
+        case DMRDoubleSlotSimplex:
+            dmr_mode=2;
+            simplex_tdma=true;
+            through_mode=true;
+            break;
+        default:
+            throw std::range_error("Unknown DMR Type: "s + std::to_string(c.dmr_type));
+    }
+
+    m_csv.write_field( simplex_tdma.to_string() );
     m_csv.write_field( c.tdma_adaptive.to_string() );
 
     switch( c.aes_encryption ){
@@ -238,7 +272,7 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
             break;
 
         case aes_enhanced:
-            m_csv.write_field("Enhanced Encryption"); //TODO: Currently assume this is the correspondinng string
+            m_csv.write_field("Enhanced Encryption"); //TODO: Currently assume this is the corresponding string
             break;
     }
 
@@ -255,7 +289,7 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
 
     m_csv.write_field( std::to_string(c.twotone_decode) );
     m_csv.write_field( c.ranging.to_string() );
-    m_csv.write_field( c.through_mode.to_string() );
+    m_csv.write_field( through_mode.to_string() );
     m_csv.write_field( c.digiaprs_rx.to_string() );
     m_csv.write_field( c.analog_aprs_ptt.to_string() );
     m_csv.write_field( c.digital_aprs_ptt.to_string() );
@@ -265,8 +299,12 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     m_csv.write_field( std::to_string(c.digital_aprs_report_channel) );
     m_csv.write_field( c.correct_mhz.value().to_string(5));
     m_csv.write_field( c.sms_confirmation.to_string() );
-    m_csv.write_field( std::to_string(c.dmr_mode) );
+
+    //These two fields' corresponding headings appear to be reversed in CPS 1.09, so we swap them relative to how CPS labels them
+    //(and we label the headings correctly, by the way)
+    //CPS will undoubtedly reverse the heading labels again if you should export, but the values stay in the same column, order-wise
     m_csv.write_field( std::to_string(c.exclude_channel_from_roaming) );
+    m_csv.write_field( std::to_string(dmr_mode) );
 
     //switch(c.squelch_mode){
     //}

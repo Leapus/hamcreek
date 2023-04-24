@@ -19,11 +19,6 @@ std::ostream &err;
 //std::istream &conin = std::cin;
 //std::ostream &err = std::cerr;
 
-extern std::ostream &conout;
-extern std::istream &conin;
-extern std::ostream &err;
-
-
 //Application state
 class State{
     leapus::hamconf::channel_map_type m_channels;
@@ -45,7 +40,5 @@ public:
 };
 
 extern State state;
-
-void print_info(const std::string &v);
 
 }

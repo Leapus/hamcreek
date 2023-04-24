@@ -8,8 +8,8 @@ leapus::hamconf::channel::channel():
     name(),
     rx_mhz(),
     tx_mhz(),
-    type( analog ),
-    tx_power(High),
+    type( ChanTypeA ),
+    tx_power(0),
     //bandwidth(narrow),
     
     tx_code_type(ToneNone),
@@ -34,7 +34,7 @@ leapus::hamconf::channel::channel():
     receive_group_list(),
     tx_prohibit(false),
     reverse(false),
-    simplex_tdma(false),
+    //simplex_tdma(false),
     tdma_adaptive(false),
     aes_encryption(aes_normal),
     digital_encryption(false),
@@ -44,7 +44,7 @@ leapus::hamconf::channel::channel():
     custom_ctss_hz(),
     twotone_decode(0),              //Defaults to 0
     ranging(false),
-    through_mode(false),
+    //through_mode(false),
     digiaprs_rx(false),
     analog_aprs_ptt(false),
     digital_aprs_ptt(false),
@@ -52,6 +52,9 @@ leapus::hamconf::channel::channel():
     digital_aprs_report_channel(1),     //CPS defaults to 1
     correct_mhz(),
     sms_confirmation(false),
-    dmr_mode(0),
-    exclude_channel_from_roaming(0)     //Seems like it should be boolean, but is oddly numeric. Defaults to 0.   
+    exclude_channel_from_roaming(0),
+    dmr_type(DMRSimplex)
+                                        //Seems like it should be boolean, but is oddly numeric. Defaults to 0.
+                                        //Update: Solved this mystery. It's because these last two headings are swapped in the CPS output
+                                        //Swapped the order of the fields here, too   
     {}

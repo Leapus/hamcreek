@@ -13,7 +13,7 @@ Then, you can scan those, and it's also easier to steer clear of the band edges 
 
 using namespace leapus::hamconf;
 
-band_channelgen::band_channelgen(ordinal_t startn, std::string name_prefix, freq_t start, freq_t end, freq_t width, power_levels power){
+band_channelgen::band_channelgen(ordinal_t startn, std::string name_prefix, freq_t start, freq_t end, freq_t width, power_t power){
 
     freq_t hwidth=width/2;
     auto n=startn;
@@ -24,7 +24,7 @@ band_channelgen::band_channelgen(ordinal_t startn, std::string name_prefix, freq
         chan.rx_mhz=fixed_point<freq_t>{f,6};
         chan.name=name_prefix + " " +  chan.rx_mhz.value().to_string(5);
         chan.tx_mhz=chan.rx_mhz;
-        chan.type=analog;
+        chan.type=ChanTypeA;
         chan.tx_power=power;
         chan.channel_mode=NFM;
         chan.squelch_mode=Carrier;

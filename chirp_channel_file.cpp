@@ -222,7 +222,7 @@ enum channel_mode_types{
 void cci::mode(const std::string &v){
    std::string v2 = leapus::string::toupper(v);
 
-   tempchan.type = analog;
+   tempchan.type = ChanTypeA;
    if(v2 == "FM"){
       tempchan.channel_mode = FM;
    }
@@ -237,15 +237,15 @@ void cci::mode(const std::string &v){
    }
    else if(v2 == "DV"){
       tempchan.channel_mode = DV;
-      tempchan.type = digital;
+      tempchan.type = ChanTypeD;
    }
    else if(v2 == "DIG"){
       tempchan.channel_mode = DIG;
-      tempchan.type = digital;
+      tempchan.type = ChanTypeD;
    }
    else if(v2 == "P25"){
       tempchan.channel_mode = P25;
-      tempchan.type = digital;
+      tempchan.type = ChanTypeD;
    }
    else{
       tempchan.channel_mode = FM;

@@ -1,12 +1,14 @@
 #include <string>
 #include <iostream>
 #include "config.hpp"
+#include "console.hpp"
 #include "main.hpp"
 #include "string.hpp"
 #include "radio_config.hpp"
 #include "chirp_channel_file.hpp"
 #include "djmd5_file.hpp"
 #include "band_channelgen.hpp"
+#include "repeaterbook_json.hpp"
 
 //using leapus::csv;
 using namespace std::string_literals;
@@ -15,14 +17,9 @@ using namespace leapus::string;
 using namespace leapus::hamconf;
 using namespace leapus::configuration;
 
-std::ostream &leapus::conout = std::cout;
-std::istream &leapus::conin = std::cin;
-std::ostream &leapus::err = std::cerr;
-
 leapus::State leapus::state;
 
 size_t State::channel_count() const{ return m_channels.size(); }
-
 const channel_map_type &State::channels() const{ return m_channels; }
 
 void State::channels( channel_map_type &&channels ){
@@ -34,13 +31,29 @@ void State::channels( channel_map_type &&channels ){
     //}
 }
 
-static void bandchangen(ordinal_t &maxi, std::string prefix, freq_t start, freq_t end, freq_t width, channel_map_type &dest, power_levels power){
+static void append_channels(ordinal_t &maxi, const std::vector<channel> &v, channel_map_type &m){
+    ordinal_t i;
+    for(auto const &c : v){
+        i=c.ordinal.value();
+        if(m.find(i) != m.end())
+            print_info("W: replacing channel ordinal #"s + std::to_string(i));
+
+        m[i]=c;
+        maxi=std::max(maxi,i);
+    }
+}
+
+static void bandchangen(ordinal_t &maxi, std::string prefix, freq_t start, freq_t end, freq_t width, channel_map_type &dest, power_t power){
     band_channelgen gen(maxi+1, prefix, start, end, width, power);
+    append_channels(maxi, gen.channels(), dest);
+
+    /*
     for( auto &c : gen.channels() ){
         auto i=c.ordinal.value();
         dest[i]=std::move(c);
         maxi=std::max(maxi,i);
     }
+    */
 }
 
 int main( int argc, const char *argv[]){
@@ -71,6 +84,11 @@ int main( int argc, const char *argv[]){
         maxi=std::max(maxi, import.max_ordinal());
     }
 
+    if(!leapus::state.config.repeaterbook_json_in.empty()){
+        rb_json_import import(maxi+1, leapus::state.config.repeaterbook_json_in);
+        append_channels(maxi, import.channels(), channels);
+    }
+
     //
     // Do Mexican stuff 
     //
@@ -78,16 +96,16 @@ int main( int argc, const char *argv[]){
         //Generate channels to fill the unlicensed public bands
         //All of these are 12.5kHz bandwidth, 40W max permissible, voice/data, no repeaters allowed
         //No interfacing with telephone services allowed.
-        bandchangen(maxi, "MEX", 153012500, 153237500, 12500, channels, High);
-        bandchangen(maxi, "MEX", 159012500, 159200000, 12500, channels, High);
-        bandchangen(maxi, "MEX", 163012500, 163237500, 12500, channels, High);
-        bandchangen(maxi, "MEX", 450262500, 450487500, 12500, channels, High);
-        bandchangen(maxi, "MEX", 455262500, 455487500, 12500, channels, High);
+        bandchangen(maxi, "MEX", 153012500, 153237500, 12500, channels, 40000);
+        bandchangen(maxi, "MEX", 159012500, 159200000, 12500, channels, 40000);
+        bandchangen(maxi, "MEX", 163012500, 163237500, 12500, channels, 40000);
+        bandchangen(maxi, "MEX", 450262500, 450487500, 12500, channels, 40000);
+        bandchangen(maxi, "MEX", 455262500, 455487500, 12500, channels, 40000);
 
         //There's also these, but they are limited to 500mW, and the closest
         //MD5 power setting is "Small" for 200mW.
-        bandchangen(maxi, "MEX", 462556250, 462568750, 12500, channels, Small);
-        bandchangen(maxi, "MEX", 462581250, 462593750, 12500, channels, Small);
+        bandchangen(maxi, "MEX", 462556250, 462568750, 12500, channels, 500);
+        bandchangen(maxi, "MEX", 462581250, 462593750, 12500, channels, 500);
     }
 
     //Merge in optional radioid.net repeater data
@@ -105,6 +123,3 @@ int main( int argc, const char *argv[]){
     return 0;
 }
 
-void leapus::print_info(const std::string &v){
-    leapus::err << v << std::endl;
-}

@@ -26,16 +26,17 @@ private:
     void require_next_arg(int &argi);
     void handle_mexico_flag(int &argi);
     void handle_ordinal_flag(int &argi);
+    void handle_rb_json_flag(int &argi);
 
 public:
     static const std::filesystem::path stdout_path;
     std::filesystem::path chirp_channels_in;
     std::filesystem::path radioid_repeaters_in;
+    std::filesystem::path repeaterbook_json_in;
     bool mexico=false;
 
-    //Allows the user to specify an initial max ordinal for generated channels, so the first ordinal is n+1.
-    //So, if you are generating a channel list to append, you would specify n as the maximum ordinal of the list being appended to.
-    //But the running maximum is always observed, so if an import loads a larger ordinal, that is the max instead
+    //Allows the user to specifiy the initial ordinal to use for generated channels. However, the maximum ordinal found among
+    //and previously imported channels will override this.
     leapus::hamconf::ordinal_t max_ordinal=0;
 
     int argc() const;
@@ -48,4 +49,3 @@ public:
 //extern Config config;
 
 }
-
