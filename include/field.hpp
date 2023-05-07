@@ -12,9 +12,10 @@ using ordinal_t = uint;
 using freq_t = ulong;
 using power_t = int; //In milliwatts
 
-enum bandwidths:freq_t{
-    narrow=12500,
-    wide=25000
+enum bandwidths_hz:freq_t{
+    bw_nfm=12500,   //Narrow FM
+    bw_fm=25000,    //Standard FM
+    bw_wfm=10000    //Wide/broadcast FM
 };
 
 //Using only integer math, parse a decimal string 
@@ -71,8 +72,8 @@ enum busy_lock_values{
 
 //TODO: Other values
 enum squelch_modes{
-    Carrier,
-    ctcss_dcs
+    SquelchCarrier,
+    SquelchCTCSS_DCS
 };
 
 //TODO: Other values
@@ -87,17 +88,17 @@ enum aprs_report_types{
 
 enum tone_code_types{
     ToneNone,
-    CTCSS,
-    DCS
+    ToneCTCSS,
+    ToneDCS
 };
 
 
 //There were three kinds of FM in here, denoting different bandwidths, but there's already a bandwidth field.
 //So, that's redundant. We're only concerned with mode here, which implies modulation and possibly digital encoding.
-enum channel_mode_types{
+//Where mode implies bandwidth, that's a device-specific consideration, so it goes there.
+//It might also make sense to eventually separate encoding from modulation, too.
+ enum channel_mode_types{
     FM,
-    NFM,    //12.5kHz
-    WFM,
     AM,
     DV,     //D-STAR
     DIG,    //DMR
@@ -140,10 +141,11 @@ public:
 class freq_field:public field<fixed_point<freq_t>>{
 public:
     using field::field;
+    freq_field(freq_t v, int dec=0);
     std::string to_string(int decimal=3) const;
 };
 
-class bandwidth_field:public field<bandwidths>{
+class bandwidth_field:public field<bandwidths_hz>{
 public:
     using field::field;
 };
@@ -189,8 +191,6 @@ public:
     using field::field;
 };
 
-//Parse a numeric string to integral tenths of a Hz
-//freq_t stringtohztenths( const std::string & );
 ulong intpow(ulong x, int p);
 
 }

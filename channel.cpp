@@ -10,7 +10,7 @@ leapus::hamconf::channel::channel():
     tx_mhz(),
     type( ChanTypeA ),
     tx_power(0),
-    //bandwidth(narrow),
+    bandwidth_khz(bw_nfm,3),
     
     tx_code_type(ToneNone),
     ctcss_tx_code_hz(67),             //Lowest
@@ -22,7 +22,7 @@ leapus::hamconf::channel::channel():
     contact_call_type(group_call),
     radio_id(),
     busy_lock(Off),
-    squelch_mode(Carrier),
+    squelch_mode(SquelchCarrier),
     optional_signal(false),
     dtmf_id(1),                 //These three seem to default to "1"
     twotone_id(1),

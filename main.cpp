@@ -60,7 +60,6 @@ int main( int argc, const char *argv[]){
 
     //auto x=fixed_point("123.001",5);
     //std::cout << "TETS: " << fixed_to_string(x,5) << std::endl;
-
     try{
         leapus::state.config.parse(argc, argv);
     }

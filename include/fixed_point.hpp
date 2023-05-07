@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <stdexcept>
 #include <utility>
 #include <string>
 #include <sstream>
@@ -8,6 +9,17 @@
 #include "string.hpp"
 
 namespace leapus{
+
+//Exceptions in the handling of fixed-point numbers
+class fixed_point_exception:public std::runtime_error{
+public:
+    using runtime_error::runtime_error;
+};
+
+class fixed_point_parse_error:public fixed_point_exception{
+public:
+    using fixed_point_exception::fixed_point_exception;
+};
 
 template<typename T>
 class fixed_point{
@@ -40,7 +52,8 @@ class fixed_point{
     //Ok. Want to avoid parsing complexities like the leading sign and any whitespace rules we don't feel like researching.
     //So, we will parse twice with and without the decimal point to calculate the mantissa and exponent.
     //We assume there are no thousand separators and the decimal is the first period or comma.
-    static std::pair<value_type, int> parse(const std::string &str){
+    static std::pair<value_type, int> parse(const std::string &str) try{
+
         value_type a=leapus::string::to_integral<value_type>(str);
         std::string str2;
 
@@ -57,7 +70,13 @@ class fixed_point{
         str2.erase(dpos, (std::string::size_type)1);
         value_type b=leapus::string::to_integral<value_type>(str2);
         int x=log10(a), y=log10(b);
-        return { a, y-x };
+        return { b, y-x };
+    }
+    catch(const std::range_error &x){
+        throw fixed_point_parse_error(std::string(x.what()) + ": string: " + str);
+    }
+    catch(const std::invalid_argument &x){
+        throw fixed_point_parse_error(std::string(x.what()) + ": string: " + str);
     }
 
 public:

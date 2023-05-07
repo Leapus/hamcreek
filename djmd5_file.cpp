@@ -37,7 +37,7 @@ void djmd5_channel_exporter::write_header(){
         "Receive Group List","TX Prohibit","Reverse","Simplex TDMA","TDMA Adaptive","AES Encryption",
         "Digital Encryption","Call Confirmation","Talk Around","Work Alone","Custom CTCSS","2TONE Decode","Ranging",
         "Through Mode","Digi APRS RX","Analog APRS PTT Mode","Digital APRS PTT Mode","APRS Report Type",
-        "Digital APRS Report Channel","Correct Frequency[Hz]","SMS Confirmation","Exclude channel from roaming","DMR MODE"};
+        "Digital APRS Report Channel","Correct Frequency[Hz]","SMS Confirmation","DMR MODE","Exclude channel from roaming"};
     
     //We write it again as fields using the API in order to be consistent, perhaps mostly with respect to delimiters
     bool first=true;
@@ -66,12 +66,12 @@ std::string mk_tone_string(const freq_field &ctcss, const dts_field &dcstone, to
 
         //These usually have a precision of 100kHz
         //Not sure why I wrote above comment. CTCSS codes are usually Hz with one decimal place for tenths
-        case CTCSS:
+        case ToneCTCSS:
             //return fixed_to_string(ctcss.value(),5);
             return ctcss.value().to_string(1);
             break;
 
-        case DCS:
+        case ToneDCS:
             //Without zero-padding to 3 digits, CPS will see a code of zero. Good job.
             ss.fill('0');
             ss.setf(std::ios_base::right, std::ios_base::adjustfield);
@@ -136,6 +136,10 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     m_csv.write_field( power_settings[tx_power] );
 
     //bandwidth field
+    auto bwstring=c.bandwidth_khz.value().to_string(1) + "K";
+    m_csv.write_field(bwstring);
+
+    /*
     switch(c.channel_mode){
 
         case WFM:
@@ -155,6 +159,7 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
             m_csv.write_field("12.5K");
             break;
     }
+    */
 
     m_csv.write_field( mk_tone_string(c.ctcss_rx_code_hz, c.dts_code, c.rx_code_type, c.rx_code_polarity) );
     m_csv.write_field( mk_tone_string(c.ctcss_tx_code_hz, c.dts_code, c.tx_code_type, c.tx_code_polarity) );
@@ -229,7 +234,7 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
     m_csv.write_field( std::to_string( c.dtmf_id));
     m_csv.write_field( std::to_string(c.twotone_id) );
     m_csv.write_field( std::to_string(c.fivetone_id) );
-    m_csv.write_field( std::to_string(c.ptt_id) );
+    m_csv.write_field( c.ptt_id.to_string() );
     m_csv.write_field( std::to_string(c.color_code) );
     m_csv.write_field( std::to_string(c.slot) );
 
@@ -302,9 +307,14 @@ void djmd5_channel_exporter::write_channel(const leapus::hamconf::channel &c){
 
     //These two fields' corresponding headings appear to be reversed in CPS 1.09, so we swap them relative to how CPS labels them
     //(and we label the headings correctly, by the way)
-    //CPS will undoubtedly reverse the heading labels again if you should export, but the values stay in the same column, order-wise
-    m_csv.write_field( std::to_string(c.exclude_channel_from_roaming) );
-    m_csv.write_field( std::to_string(dmr_mode) );
+    //CPS will undoubtedly reverse the heading labels again if you should export, but the values stay in the same column, position-wise
+    //To further complicate things, the "exclude from roaming field" is 0 for false, and not "No"
+    //TODO: Actually honor this field on output because it does nothing right now anyway
+
+    //m_csv.write_field( c.exclude_channel_from_roaming.to_string() );
+    m_csv.write_field( "0" );
+
+    m_csv.write_field( std::to_string(dmr_mode.value()) );
 
     //switch(c.squelch_mode){
     //}

@@ -35,7 +35,7 @@ public:
     freq_field tx_mhz;
     channel_type_field type;
     tx_power_field tx_power;
-    //freq_field bandwidth; //Already implied by the modulation type
+    freq_field bandwidth_khz;
 
     //This is broken down into extra fields for ease of representation
     field<tone_code_types> tx_code_type;

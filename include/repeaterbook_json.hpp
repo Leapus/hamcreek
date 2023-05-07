@@ -30,6 +30,8 @@ private:
     void do_import(std::ifstream &stream);
     void do_summary() const;
     void handle_record(const Json::Value &obj, bool dig_pass=false);
+    void record_print_info(const std::string &) const;
+    bool squelch_tone_set(const Json::Value rec, const std::string &k, freq_field &dest);
 
 public:
     rb_json_import(ordinal_t starti, const std::filesystem::path &path);

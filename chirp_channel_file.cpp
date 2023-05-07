@@ -135,14 +135,14 @@ void cci::tone(const std::string &v){
    //TX-only tone code
    if(v2 == "TONE"){
       //m_tone_mode = Tone;
-      tempchan.tx_code_type = CTCSS;
+      tempchan.tx_code_type = ToneCTCSS;
       tempchan.rx_code_type = ToneNone;
    }
    else if(v2 == "TSQL"){
       //TX and RX-squelch tone
-      tempchan.tx_code_type = tempchan.rx_code_type = CTCSS;
+      tempchan.tx_code_type = tempchan.rx_code_type = ToneCTCSS;
    }else if(v2 == "DTCS"){
-      tempchan.tx_code_type = tempchan.rx_code_type = DCS;
+      tempchan.tx_code_type = tempchan.rx_code_type = ToneDCS;
    }
    else{
       //Empty or non-recognized tone mode defaults to none
@@ -225,30 +225,38 @@ void cci::mode(const std::string &v){
    tempchan.type = ChanTypeA;
    if(v2 == "FM"){
       tempchan.channel_mode = FM;
+      tempchan.bandwidth_khz={bw_fm, 3};
    }
    else if(v2 == "NFM"){
-      tempchan.channel_mode = NFM;
+      tempchan.channel_mode = FM;
+      tempchan.bandwidth_khz={bw_nfm, 3};
    }
    else if(v2 == "WFM"){
-      tempchan.channel_mode = WFM;
+      tempchan.channel_mode = FM;
+      tempchan.bandwidth_khz={bw_wfm, 3};
    }
    else if(v2 == "AM"){
       tempchan.channel_mode = AM;
+      tempchan.bandwidth_khz={1,0}; //Not relevant for AM. It's an exact frequency.
    }
    else if(v2 == "DV"){
       tempchan.channel_mode = DV;
       tempchan.type = ChanTypeD;
+      tempchan.bandwidth_khz={bw_nfm, 3};
    }
    else if(v2 == "DIG"){
       tempchan.channel_mode = DIG;
       tempchan.type = ChanTypeD;
+      tempchan.bandwidth_khz={bw_nfm, 3};
    }
    else if(v2 == "P25"){
       tempchan.channel_mode = P25;
       tempchan.type = ChanTypeD;
+      tempchan.bandwidth_khz={bw_nfm, 3};
    }
    else{
       tempchan.channel_mode = FM;
+      tempchan.bandwidth_khz={bw_fm, 3};
       channel_warning("Unknown channel mode string: "s + v + ", defaulting to FM"s);
    }
 }

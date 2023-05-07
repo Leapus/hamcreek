@@ -24,10 +24,11 @@ band_channelgen::band_channelgen(ordinal_t startn, std::string name_prefix, freq
         chan.rx_mhz=fixed_point<freq_t>{f,6};
         chan.name=name_prefix + " " +  chan.rx_mhz.value().to_string(5);
         chan.tx_mhz=chan.rx_mhz;
+        chan.bandwidth_khz={width,3};
         chan.type=ChanTypeA;
         chan.tx_power=power;
-        chan.channel_mode=NFM;
-        chan.squelch_mode=Carrier;
+        chan.channel_mode=FM;
+        chan.squelch_mode=SquelchCarrier;
         chan.scan_list=name_prefix;
         m_channels.push_back(chan);
     }
